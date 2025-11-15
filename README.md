@@ -1,4 +1,4 @@
-# BitcoinMeetings app
+# Bitcoin Meetings Diretory
 
 ## Run the app
 
