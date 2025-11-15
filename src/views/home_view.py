@@ -1,12 +1,12 @@
 import flet as ft
-from components.navigation_bar import NavBar
+from views.layout_view import LayoutView
 
 
-class HomeView(ft.View):
-    def __init__(self, page: ft.Page):
+class HomeView(LayoutView):
+    def __init__(self, page: ft.Page, route: str = "/"):
         super().__init__(
-            route="/",
-            navigation_bar=NavBar(page=page).build(),
+            page=page,
+            route=route,
             controls=[
                 ft.Column(
                     [
