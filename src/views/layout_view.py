@@ -10,12 +10,12 @@ class LayoutView(ft.View):
         route: str,
         controls: List[ft.Control] | None = None,
         appbar: ft.AppBar | None = None,
-        padding: int | None = 10,
+        padding: ft.Padding = ft.padding.only(top=30, bottom=10, left=10, right=10),
         **kwargs,
     ):
         self.page = page
 
-        nav_bar = NavBar(page=self.page).build() # type: ignore
+        nav_bar = NavBar(page=self.page).build()  # type: ignore
 
         super().__init__(
             route=route,
