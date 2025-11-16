@@ -10,11 +10,9 @@ class HomeView(LayoutView):
             controls=[
                 ft.Column(
                     [
-                        ft.Text("¡Bienvenido!", size=28, weight=ft.FontWeight.BOLD),
-                        ft.Text("Esta es la página principal.", size=16),
+                        ft.Text("Inicio", size=28, weight=ft.FontWeight.BOLD),
+                        ft.Text("Bienvenido a Bitcoin Meetings Directory", size=14)
                     ],
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
             ],
         )
