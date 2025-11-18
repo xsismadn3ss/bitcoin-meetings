@@ -1,19 +1,11 @@
 import flet as ft
 from typing import Dict, Callable
 
-# vistas
-from views.home_view import HomeView
-from views.profile_view import ProfileView
-
 
 class Router:
-    def __init__(self, page: ft.Page) -> None:
+    def __init__(self, page: ft.Page, routes: Dict[str, Callable[[ft.Page], ft.View]]) -> None:
         self.page = page
-        self.page = page
-        self.routes: Dict[str, Callable[[ft.Page], ft.View]] = {
-            "/": lambda p: HomeView(p),
-            "/profile": lambda p: ProfileView(p),
-        }
+        self.routes = routes
 
     def route_change(self, route):
         # Limpiar todas las vistas anteriores
@@ -47,5 +39,5 @@ class Router:
             top_view = self.page.views[-1]
             route = getattr(top_view, "route", None)
             if route is None:
-                route = "/"  # todo: implementar ruta para 404
+                route = "/"
             self.page.go(route)
