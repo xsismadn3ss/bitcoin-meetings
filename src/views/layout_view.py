@@ -25,3 +25,21 @@ class LayoutView(ft.View):
             padding=padding,
             **kwargs,
         )
+
+    def open_dialog(self, dialog: ft.AlertDialog):
+        """Abrir díalogo
+
+        Args:
+            dialog (ft.AlertDialog): díalogo
+        """
+        self.page.open(dialog)  # type: ignore
+        self.page.update()  # type: ignore
+
+    def close_dialog(self, dialog: ft.AlertDialog):
+        """Cerrar díalogo
+
+        Args:
+            dialog (ft.AlertDialog): díalogo
+        """
+        self.page.close(dialog)  # type: ignore
+        self.page.update()  # type: ignore
