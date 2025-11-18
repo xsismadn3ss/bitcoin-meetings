@@ -1,5 +1,6 @@
 import flet as ft
 from config.theme import scheme
+from config.routes import routes
 from service.router import Router
 
 
@@ -8,7 +9,7 @@ def main(page: ft.Page):
 
     page.theme = ft.Theme(color_scheme=scheme)
 
-    router = Router(page=page)
+    router = Router(page, routes)
     page.on_route_change = router.route_change
     page.on_view_pop = router.view_pop
 
