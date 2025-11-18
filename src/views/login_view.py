@@ -4,7 +4,7 @@ import flet as ft
 from pydantic import ValidationError
 from service.auth_service import login
 
-from .layout_view import LayoutView
+from ._layout_view import LayoutView
 
 
 class LoginView(LayoutView):
