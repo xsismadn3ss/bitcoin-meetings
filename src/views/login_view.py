@@ -92,11 +92,11 @@ class LoginView(LayoutView):
             self.page.go("/")  # type: ignore
 
         except ValidationError as ve:
-            self.status.value = f'Datos inválidos: {ve.errors()[0]["msg"]}'
+            self.status.value = f"Datos inválidos: {ve.errors()[0]['msg']}"
             self.status.color = ft.Colors.ORANGE
         except httpx.HTTPStatusError as err:
             error: dict = json.loads(err.response.text)
-            self.status.value = f"Error: {error.get("message")}"
+            self.status.value = f"Error: {error.get('message')}"
             self.status.color = ft.Colors.RED
         except Exception as e:
             self.status.value = f"Error inesperado: {str(e)}"
