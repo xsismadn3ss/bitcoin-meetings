@@ -3,7 +3,9 @@ from typing import Dict, Callable
 
 
 class Router:
-    def __init__(self, page: ft.Page, routes: Dict[str, Callable[[ft.Page], ft.View]]) -> None:
+    def __init__(
+        self, page: ft.Page, routes: Dict[str, Callable[[ft.Page], ft.View]]
+    ) -> None:
         self.page = page
         self.routes = routes
 

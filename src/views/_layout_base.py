@@ -1,9 +1,13 @@
 import flet as ft
 from typing import List
-from components.navigation_bar import NavBar
 
 
-class LayoutView(ft.View):
+class BaseLayout(ft.View):
+    """Plantilla base para vistas
+
+    Esta plantilla contiene métodos para abrir y cerrar díalogos
+    """
+
     def __init__(
         self,
         page: ft.Page,
@@ -15,11 +19,8 @@ class LayoutView(ft.View):
     ):
         self.page = page
 
-        nav_bar = NavBar(page=self.page).build()  # type: ignore
-
         super().__init__(
             route=route,
-            navigation_bar=nav_bar,
             appbar=appbar,
             controls=controls or [],
             padding=padding,

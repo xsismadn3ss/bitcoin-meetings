@@ -8,7 +8,8 @@ authors = [
     { name = "xsismadn3ss", email = "2477carlos.a@gmail.com" }
 ]
 dependencies = [
-  "flet==0.28.3"
+  "flet==0.28.3",
+  "pydantic[email]>=2.12.3",
 ]
 
 [tool.flet]
