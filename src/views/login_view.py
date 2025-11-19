@@ -4,6 +4,7 @@ import flet as ft
 from pydantic import ValidationError
 from service.auth_service import login
 from models.auth import AuthLoginDto
+from components.title import Title
 
 from ._layout_view import LayoutView
 
@@ -34,11 +35,7 @@ class LoginView(LayoutView):
                 ft.Column(
                     [
                         ft.Container(
-                            ft.Text(
-                                "Inicio de sesión",
-                                size=28,
-                                weight=ft.FontWeight.BOLD,
-                            ),
+                            Title("Inicio de sesión"),
                             margin=ft.margin.only(bottom=15, top=15),
                         ),
                         ft.ResponsiveRow(
