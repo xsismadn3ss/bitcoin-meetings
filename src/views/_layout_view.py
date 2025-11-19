@@ -1,9 +1,10 @@
 import flet as ft
 from typing import List
 from components.navigation_bar import NavBar
+from ._layout_base import BaseLayout
 
 
-class LayoutView(ft.View):
+class LayoutView(BaseLayout):
     def __init__(
         self,
         page: ft.Page,
@@ -25,21 +26,3 @@ class LayoutView(ft.View):
             padding=padding,
             **kwargs,
         )
-
-    def open_dialog(self, dialog: ft.AlertDialog):
-        """Abrir díalogo
-
-        Args:
-            dialog (ft.AlertDialog): díalogo
-        """
-        self.page.open(dialog)  # type: ignore
-        self.page.update()  # type: ignore
-
-    def close_dialog(self, dialog: ft.AlertDialog):
-        """Cerrar díalogo
-
-        Args:
-            dialog (ft.AlertDialog): díalogo
-        """
-        self.page.close(dialog)  # type: ignore
-        self.page.update()  # type: ignore
