@@ -3,8 +3,7 @@ from config.api import PREFIX
 from models.auth import AuthLoginDto
 
 
-async def login(email, password) -> dict:
-    data = AuthLoginDto(email=email, password=password)
+async def login(data:AuthLoginDto) -> dict:
 
     async with httpx.AsyncClient() as client:
         response = await client.post(
@@ -14,3 +13,4 @@ async def login(email, password) -> dict:
         )
         response.raise_for_status()
         return response.json()
+
