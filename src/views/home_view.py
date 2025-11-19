@@ -1,5 +1,5 @@
 import flet as ft
-from views._layout_view import LayoutNavBar
+from views._layout_navbar import LayoutNavBar
 
 
 class HomeView(LayoutNavBar):

@@ -6,7 +6,7 @@ from service.auth_service import login
 from models.auth import AuthLoginDto
 from components.title import Title
 
-from ._layout_view import LayoutNavBar
+from ._layout_navbar import LayoutNavBar
 
 
 class LoginView(LayoutNavBar):
