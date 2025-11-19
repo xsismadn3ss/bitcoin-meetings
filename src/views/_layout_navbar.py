@@ -4,7 +4,7 @@ from components.navigation_bar import NavBar
 from ._layout_base import BaseLayout
 
 
-class LayoutView(BaseLayout):
+class LayoutNavBar(BaseLayout):
     def __init__(
         self,
         page: ft.Page,

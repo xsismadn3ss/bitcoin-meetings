@@ -6,10 +6,10 @@ from service.auth_service import login
 from models.auth import AuthLoginDto
 from components.title import Title
 
-from ._layout_view import LayoutView
+from ._layout_view import LayoutNavBar
 
 
-class LoginView(LayoutView):
+class LoginView(LayoutNavBar):
     def __init__(self, page: ft.Page, route: str = "/login"):
         self.email_text = ft.TextField(
             label="Email",

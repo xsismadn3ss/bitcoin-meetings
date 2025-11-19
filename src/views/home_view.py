@@ -1,8 +1,8 @@
 import flet as ft
-from views._layout_view import LayoutView
+from views._layout_view import LayoutNavBar
 
 
-class HomeView(LayoutView):
+class HomeView(LayoutNavBar):
     def __init__(self, page: ft.Page, route: str = "/"):
         super().__init__(
             page=page,
