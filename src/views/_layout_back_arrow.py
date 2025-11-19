@@ -25,7 +25,7 @@ class LayoutBackArrow(BaseLayout):
         )
         header = ft.Container(
             ft.Row([back_btn, view_title]),
-            padding=ft.padding.only(top=10, bottom=10, left=5, right=5),
+            padding=ft.padding.only(top=30, bottom=10, left=5, right=5),
             border=ft.Border(
                 bottom=ft.BorderSide(
                     width=0.5,  # Grosor (1.5px)
