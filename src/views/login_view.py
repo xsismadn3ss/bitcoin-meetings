@@ -4,13 +4,15 @@ import flet as ft
 from pydantic import ValidationError
 from service.auth_service import login
 from models.auth import AuthLoginDto
-from components.title import Title
 
-from ._layout_navbar import LayoutNavBar
+from ._layout_back_arrow import LayoutBackArrow
+from ._layout_error_dialog import LayoutErrorDialog
 
 
-class LoginView(LayoutNavBar):
-    def __init__(self, page: ft.Page, route: str = "/login"):
+class LoginView(LayoutBackArrow, LayoutErrorDialog):
+    def __init__(
+        self, page: ft.Page, title: str = "Inicio de sesión", route: str = "/login"
+    ):
         self.email_text = ft.TextField(
             label="Email",
             value="",
@@ -30,14 +32,12 @@ class LoginView(LayoutNavBar):
 
         super().__init__(
             page,
+            title,
             route,
+            "/",
             controls=[
                 ft.Column(
                     [
-                        ft.Container(
-                            Title("Inicio de sesión"),
-                            margin=ft.margin.only(bottom=15, top=15),
-                        ),
                         ft.ResponsiveRow(
                             [
                                 ft.Container(
@@ -93,36 +93,15 @@ class LoginView(LayoutNavBar):
                 if campo == "password" and tipo == "string_too_short":
                     errors.append("La contraseña debe tener mínimo 6 carácteres")
             self.open_dialog(
-                self._error_dialog(errors, title="Advertencia", color=ft.Colors.ORANGE)
+                self.build_error_dialog(
+                    errors,
+                    title="Advertencia",
+                    color=ft.Colors.ORANGE,
+                    bgcolor=ft.Colors.with_opacity(0.1, ft.Colors.ORANGE),
+                )
             )
         except httpx.HTTPStatusError as err:
             http_error: dict = json.loads(err.response.text)
-            self.open_dialog(self._error_dialog([http_error["message"]]))
+            self.open_dialog(self.build_error_dialog([http_error["message"]]))
         except Exception as e:
-            self.open_dialog(self._error_dialog([f"{str(e)}"]))
-
-    def _error_dialog(
-        self,
-        errors: list[str],
-        title: str = "Error",
-        color: ft.ColorValue | None = ft.Colors.RED,
-    ):
-        modal = ft.AlertDialog(
-            modal=True,
-            title=ft.Text(title, weight=ft.FontWeight.BOLD),
-            content=ft.Column(
-                [
-                    ft.Text(f"• {e}", color=color, weight=ft.FontWeight.W_500)
-                    for e in errors
-                ],
-                scroll=ft.ScrollMode.ADAPTIVE,
-                height=75,
-                horizontal_alignment=ft.CrossAxisAlignment.START,
-                tight=True,
-            ),
-            actions=[
-                ft.TextButton("cerrar", on_click=lambda e: self.close_dialog(modal))  # type: ignore
-            ],
-            actions_alignment=ft.MainAxisAlignment.END,
-        )
-        return modal
+            self.open_dialog(self.build_error_dialog([f"{str(e)}"]))
