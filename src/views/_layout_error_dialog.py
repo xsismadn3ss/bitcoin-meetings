@@ -19,6 +19,7 @@ class LayoutErrorDialog(BaseLayout):
         title: str = "Error",
         color: ft.ColorValue | None = ft.Colors.RED,
         bgcolor: ft.ColorValue | None = ft.Colors.with_opacity(0.2, ft.Colors.RED),
+        height: int = 75
     ):
         brightness = self.page.platform_brightness  # type: ignore
         is_dark = brightness == ft.Brightness.DARK
@@ -37,7 +38,7 @@ class LayoutErrorDialog(BaseLayout):
                     for e in errors
                 ],
                 scroll=ft.ScrollMode.ADAPTIVE,
-                height=75,
+                height=height,
                 horizontal_alignment=ft.CrossAxisAlignment.START,
                 tight=True,
             ),
