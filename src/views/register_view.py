@@ -5,7 +5,7 @@ from pydantic import ValidationError
 from service.auth_service import register
 from models.user import RegisterUserDto
 
-from ._layout_error_dialog import LayoutErrorDialog
+from ._layout_error_dialog import LayoutErrorDialog, ErrorLevel
 from ._layout_back_arrow import LayoutBackArrow
 
 
@@ -25,12 +25,14 @@ class RegisterView(LayoutBackArrow, LayoutErrorDialog):
             border_radius=15,
             border_color=ft.Colors.SECONDARY_CONTAINER,
             focused_border_color=ft.Colors.PRIMARY_CONTAINER,
+            on_submit=self.handle_register
         )
         self.email_text = ft.TextField(
             label="Email",
             border_radius=15,
             border_color=ft.Colors.SECONDARY_CONTAINER,
             focused_border_color=ft.Colors.PRIMARY_CONTAINER,
+            on_submit=self.handle_register
         )
         self.password_text = ft.TextField(
             label="Contraseña",
@@ -39,6 +41,7 @@ class RegisterView(LayoutBackArrow, LayoutErrorDialog):
             focused_border_color=ft.Colors.PRIMARY_CONTAINER,
             password=True,
             can_reveal_password=True,
+            on_submit=self.handle_register
         )
 
         super().__init__(
@@ -106,14 +109,13 @@ class RegisterView(LayoutBackArrow, LayoutErrorDialog):
                     )
                 if campo == "name":
                     errors.append("El nombre no debe estar vacío")
-      
+
             self.open_dialog(
                 self.build_error_dialog(
                     errors,
                     "Advertencia",
-                    ft.Colors.ORANGE,
-                    ft.Colors.with_opacity(0.2, ft.Colors.ORANGE),
-                    height=150 if len(errors) > 2 else 75
+                    level=ErrorLevel.WARNING,
+                    height=150 if len(errors) > 2 else 75,
                 )
             )
         except httpx.HTTPStatusError as err:
