@@ -4,4 +4,4 @@ from .password import PasswordSchema
 
 
 class RegisterUserDto(EmailSchema, PasswordSchema, BaseModel):
-    name: str = Field()
+    name: str = Field(min_length=1)
