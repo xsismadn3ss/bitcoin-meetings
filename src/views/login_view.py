@@ -3,6 +3,7 @@ import httpx
 import flet as ft
 from pydantic import ValidationError
 from service.auth_service import login
+from models.auth import AuthLoginDto
 
 from ._layout_view import LayoutView
 
@@ -25,7 +26,6 @@ class LoginView(LayoutView):
             border_color=ft.Colors.SECONDARY_CONTAINER,
             focused_border_color=ft.Colors.PRIMARY_CONTAINER,
         )
-        self.status = ft.Text(visible=False)
 
         super().__init__(
             page,
@@ -59,7 +59,6 @@ class LoginView(LayoutView):
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
                         ),
-                        self.status,
                         ft.ElevatedButton(
                             "Iniciar sesión",
                             icon=ft.Icons.LOGIN,
@@ -72,34 +71,61 @@ class LoginView(LayoutView):
         )
 
     async def _handle_login(self, e):
-        self.status.visible = True
-        self.status.color = ft.Colors.WHITE
-        self.status.value = "Cargando..."
-        self.page.update()  # type: ignore
 
         try:
-            result = await login(self.email_text.value, self.password_text.value)
+            data = AuthLoginDto(
+                email=self.email_text.value, password=self.password_text.value  # type: ignore
+            )
+            result = await login(data)
 
             token = result.get("token")
             name = result.get("name")
             await self.page.client_storage.set_async("auth_token", token)  # type: ignore
             await self.page.client_storage.set_async("name", name)  # type: ignore
 
-            self.status.value = f"Bienvenido {name}"
-            self.status.color = ft.Colors.GREEN
-
             self.page.update()  # type: ignore
             self.page.go("/")  # type: ignore
-
         except ValidationError as ve:
-            self.status.value = f"Datos inválidos: {ve.errors()[0]['msg']}"
-            self.status.color = ft.Colors.ORANGE
-        except httpx.HTTPStatusError as err:
-            error: dict = json.loads(err.response.text)
-            self.status.value = f"Error: {error.get('message')}"
-            self.status.color = ft.Colors.RED
-        except Exception as e:
-            self.status.value = f"Error inesperado: {str(e)}"
-            self.status.color = ft.Colors.RED
+            errors: list[str] = []
+            for error in ve.errors():
+                campo = error["loc"][0]  # 'email' o 'password'
+                tipo = error["type"]  # 'string_too_short', 'value_error'
 
-        self.page.update()  # type: ignore
+                if campo == "email":
+                    errors.append("Dirección de correo electrónico inválida")
+                if campo == "password" and tipo == "string_too_short":
+                    errors.append("La contraseña debe tener mínimo 6 carácteres")
+            self.open_dialog(
+                self._error_dialog(errors, title="Advertencia", color=ft.Colors.ORANGE)
+            )
+        except httpx.HTTPStatusError as err:
+            http_error: dict = json.loads(err.response.text)
+            self.open_dialog(self._error_dialog([http_error["message"]]))
+        except Exception as e:
+            self.open_dialog(self._error_dialog([f"{str(e)}"]))
+
+    def _error_dialog(
+        self,
+        errors: list[str],
+        title: str = "Error",
+        color: ft.ColorValue | None = ft.Colors.RED,
+    ):
+        modal = ft.AlertDialog(
+            modal=True,
+            title=ft.Text(title, weight=ft.FontWeight.BOLD),
+            content=ft.Column(
+                [
+                    ft.Text(f"• {e}", color=color, weight=ft.FontWeight.W_500)
+                    for e in errors
+                ],
+                scroll=ft.ScrollMode.ADAPTIVE,
+                height=75,
+                horizontal_alignment=ft.CrossAxisAlignment.START,
+                tight=True,
+            ),
+            actions=[
+                ft.TextButton("cerrar", on_click=lambda e: self.close_dialog(modal))  # type: ignore
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+        )
+        return modal
