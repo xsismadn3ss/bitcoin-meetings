@@ -1,10 +1,9 @@
 from typing import Any
-from pydantic import BaseModel, Field, field_validator
-from utils.email import validate_email
+from pydantic import BaseModel, Field
+from .email import EmailSchema
 
 
-class AuthLoginDto(BaseModel):
-    email: str = Field(..., description="Correo electrónico valido")
+class AuthLoginDto(EmailSchema, BaseModel):
     password: str = Field(
         ...,
         min_length=6,
@@ -13,10 +12,3 @@ class AuthLoginDto(BaseModel):
             "error_message": "La contraseña debe tener entre 6 y 128 carácteres"
         },
     )
-
-    @field_validator("email")
-    @classmethod
-    def validate(cls, value: Any):
-        if not validate_email(value):
-            raise ValueError("El formato de correo electrónico es inválido")
-        return value
