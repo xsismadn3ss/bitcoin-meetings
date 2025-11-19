@@ -6,7 +6,7 @@ from service.auth_service import login
 from models.auth import AuthLoginDto
 
 from ._layout_back_arrow import LayoutBackArrow
-from ._layout_error_dialog import LayoutErrorDialog
+from ._layout_error_dialog import LayoutErrorDialog, ErrorLevel
 
 
 class LoginView(LayoutBackArrow, LayoutErrorDialog):
@@ -19,6 +19,8 @@ class LoginView(LayoutBackArrow, LayoutErrorDialog):
             border_radius=15,
             border_color=ft.Colors.SECONDARY_CONTAINER,
             focused_border_color=ft.Colors.PRIMARY_CONTAINER,
+            keyboard_type=ft.KeyboardType.EMAIL,
+            on_submit=self.handle_focus,
         )
         self.password_text = ft.TextField(
             label="Contraseña",
@@ -28,6 +30,7 @@ class LoginView(LayoutBackArrow, LayoutErrorDialog):
             border_radius=15,
             border_color=ft.Colors.SECONDARY_CONTAINER,
             focused_border_color=ft.Colors.PRIMARY_CONTAINER,
+            on_submit=self._handle_login,
         )
 
         super().__init__(
@@ -67,7 +70,23 @@ class LoginView(LayoutBackArrow, LayoutErrorDialog):
             ],
         )
 
+    def handle_focus(self, e) -> bool:
+        email = self.email_text.value
+        password = self.password_text.value
+
+        if email and not password:
+            self.password_text.focus()
+        else:
+            self.email_text.focus()
+
+        return (email != None and password != None) and (
+            email.strip() != "" and password.strip() != ""
+        )
+
     async def _handle_login(self, e):
+        is_valid = self.handle_focus(e)
+        if not is_valid:
+            return
 
         try:
             data = AuthLoginDto(
@@ -94,10 +113,7 @@ class LoginView(LayoutBackArrow, LayoutErrorDialog):
                     errors.append("La contraseña debe tener mínimo 6 carácteres")
             self.open_dialog(
                 self.build_error_dialog(
-                    errors,
-                    title="Advertencia",
-                    color=ft.Colors.ORANGE,
-                    bgcolor=ft.Colors.with_opacity(0.1, ft.Colors.ORANGE),
+                    errors, title="Advertencia", level=ErrorLevel.WARNING
                 )
             )
         except httpx.HTTPStatusError as err:
