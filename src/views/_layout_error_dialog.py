@@ -1,6 +1,19 @@
 from typing import List
 import flet as ft
 from ._layout_base import BaseLayout
+from enum import Enum
+
+
+class ErrorLevel(Enum):
+    DANGER = "danger"
+    WARNING = "warning"
+
+
+class ErrorColors(Enum):
+    LIGHT_DANGER = "#FFEDED"
+    DARK_DANGER = "#391212"
+    LIGHT_WARNING = "#FFECE3"
+    DARK_WARNING = "#3A1F10"
 
 
 class LayoutErrorDialog(BaseLayout):
@@ -17,22 +30,30 @@ class LayoutErrorDialog(BaseLayout):
         self,
         errors: list[str] = [],
         title: str = "Error",
-        color: ft.ColorValue | None = ft.Colors.RED,
-        bgcolor: ft.ColorValue | None = ft.Colors.with_opacity(0.2, ft.Colors.RED),
-        height: int = 75
+        level: ErrorLevel = ErrorLevel.DANGER,
+        height: int = 75,
     ):
         brightness = self.page.platform_brightness  # type: ignore
         is_dark = brightness == ft.Brightness.DARK
 
+        bg = ft.Colors.ON_PRIMARY
+        color = ft.Colors.PRIMARY
+
+        if level == ErrorLevel.DANGER:
+            bg = ErrorColors.DARK_DANGER if is_dark else ErrorColors.LIGHT_DANGER
+            color = ft.Colors.RED
+        if level == ErrorLevel.WARNING:
+            color = ft.Colors.ORANGE
+            bg = ErrorColors.DARK_WARNING if is_dark else ErrorColors.LIGHT_WARNING
+
         modal = ft.AlertDialog(
-            # modal=True,
             title=ft.Text(title, color=color, weight=ft.FontWeight.BOLD),
-            bgcolor=bgcolor if is_dark else None,
+            bgcolor=bg.value,  # type: ignore
             content=ft.Column(
                 [
                     ft.Text(
                         f"• {e}",
-                        color=color if is_dark else None,
+                        color=color,
                         weight=ft.FontWeight.W_500,
                     )
                     for e in errors
