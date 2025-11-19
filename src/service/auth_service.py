@@ -1,9 +1,10 @@
 import httpx
 from config.api import PREFIX
 from models.auth import AuthLoginDto
+from models.user import RegisterUserDto
 
 
-async def login(data:AuthLoginDto) -> dict:
+async def login(data: AuthLoginDto) -> dict:
 
     async with httpx.AsyncClient() as client:
         response = await client.post(
@@ -14,3 +15,11 @@ async def login(data:AuthLoginDto) -> dict:
         response.raise_for_status()
         return response.json()
 
+
+async def register(data: RegisterUserDto):
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            f"{PREFIX}/auth/register", json=data.model_dump(), timeout=10.0
+        )
+        response.raise_for_status()
+        return response.json()
