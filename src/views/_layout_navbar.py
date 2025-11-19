@@ -19,6 +19,7 @@ class LayoutNavBar(BaseLayout):
         nav_bar = NavBar(page=self.page).build()  # type: ignore
 
         super().__init__(
+            page=page,
             route=route,
             navigation_bar=nav_bar,
             appbar=appbar,
