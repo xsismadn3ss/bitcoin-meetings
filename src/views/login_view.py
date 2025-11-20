@@ -4,6 +4,7 @@ import flet as ft
 from pydantic import ValidationError
 from service.auth_service import login
 from models.auth import AuthLoginDto
+from utils.forms import focus_inputs
 
 from ._layout_back_arrow import LayoutBackArrow
 from ._layout_error_dialog import LayoutErrorDialog, ErrorLevel
@@ -20,7 +21,7 @@ class LoginView(LayoutBackArrow, LayoutErrorDialog):
             border_color=ft.Colors.SECONDARY_CONTAINER,
             focused_border_color=ft.Colors.PRIMARY_CONTAINER,
             keyboard_type=ft.KeyboardType.EMAIL,
-            on_submit=self.handle_focus,
+            on_submit=self.handle_login,
         )
         self.password_text = ft.TextField(
             label="Contraseña",
@@ -30,7 +31,7 @@ class LoginView(LayoutBackArrow, LayoutErrorDialog):
             border_radius=15,
             border_color=ft.Colors.SECONDARY_CONTAINER,
             focused_border_color=ft.Colors.PRIMARY_CONTAINER,
-            on_submit=self._handle_login,
+            on_submit=self.handle_login,
         )
 
         super().__init__(
@@ -62,7 +63,7 @@ class LoginView(LayoutBackArrow, LayoutErrorDialog):
                         ft.ElevatedButton(
                             "Iniciar sesión",
                             icon=ft.Icons.LOGIN,
-                            on_click=self._handle_login,
+                            on_click=self.handle_login,
                         ),
                     ],
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -70,27 +71,13 @@ class LoginView(LayoutBackArrow, LayoutErrorDialog):
             ],
         )
 
-    def handle_focus(self, e) -> bool:
-        email = self.email_text.value
-        password = self.password_text.value
-
-        if email and not password:
-            self.password_text.focus()
-        else:
-            self.email_text.focus()
-
-        return (email != None and password != None) and (
-            email.strip() != "" and password.strip() != ""
-        )
-
-    async def _handle_login(self, e):
-        is_valid = self.handle_focus(e)
-        if not is_valid:
-            return
+    @focus_inputs("email_text", "password_text")
+    async def handle_login(self, e):
 
         try:
             data = AuthLoginDto(
-                email=self.email_text.value, password=self.password_text.value  # type: ignore
+                email=self.email_text.value,  # type: ignore
+                password=self.password_text.value,  # type: ignore
             )
             result = await login(data)
 

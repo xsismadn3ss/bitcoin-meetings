@@ -4,6 +4,7 @@ import flet as ft
 from pydantic import ValidationError
 from service.auth_service import register
 from models.user import RegisterUserDto
+from utils.forms import focus_inputs
 
 from ._layout_error_dialog import LayoutErrorDialog, ErrorLevel
 from ._layout_back_arrow import LayoutBackArrow
@@ -32,7 +33,8 @@ class RegisterView(LayoutBackArrow, LayoutErrorDialog):
             border_radius=15,
             border_color=ft.Colors.SECONDARY_CONTAINER,
             focused_border_color=ft.Colors.PRIMARY_CONTAINER,
-            on_submit=self.handle_register
+            keyboard_type=ft.KeyboardType.EMAIL,
+            on_submit=self.handle_register,
         )
         self.password_text = ft.TextField(
             label="Contraseña",
@@ -41,7 +43,7 @@ class RegisterView(LayoutBackArrow, LayoutErrorDialog):
             focused_border_color=ft.Colors.PRIMARY_CONTAINER,
             password=True,
             can_reveal_password=True,
-            on_submit=self.handle_register
+            on_submit=self.handle_register,
         )
 
         super().__init__(
@@ -77,9 +79,8 @@ class RegisterView(LayoutBackArrow, LayoutErrorDialog):
             ],
             **kwargs,
         )
-
+    @focus_inputs("name_text", "email_text", "password_text")
     async def handle_register(self, e):
-        self.page.update()  # type: ignore
         try:
             data = RegisterUserDto(
                 name=self.name_text.value,  # type: ignore
@@ -110,16 +111,22 @@ class RegisterView(LayoutBackArrow, LayoutErrorDialog):
                 if campo == "name":
                     errors.append("El nombre no debe estar vacío")
 
+            count = ve.error_count()
+            height = 75
+            if count == 2:
+                height = 150
+            if count == 3:
+                height = 200
+
             self.open_dialog(
                 self.build_error_dialog(
-                    errors,
-                    "Advertencia",
-                    level=ErrorLevel.WARNING,
-                    height=150 if len(errors) > 2 else 75,
+                    errors, "Advertencia", level=ErrorLevel.WARNING, height=height
                 )
             )
         except httpx.HTTPStatusError as err:
             http_error: dict = json.loads(err.response.text)
-            self.open_dialog(self.build_error_dialog([http_error["message"]]))
+            self.open_dialog(
+                self.build_error_dialog([http_error["message"]], height=50)
+            )
         except Exception as ex:
-            self.open_dialog(self.build_error_dialog([f"{str(ex)}"]))
+            self.open_dialog(self.build_error_dialog([f"{str(ex)}"], height=50))
