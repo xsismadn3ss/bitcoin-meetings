@@ -12,11 +12,6 @@ class HomeView(LayoutNavBar):
                     [
                         ft.Text("Inicio", size=28, weight=ft.FontWeight.BOLD),
                         ft.Text("Bienvenido a Bitcoin Meetings Directory", size=14),
-                        ft.ElevatedButton(
-                            "Login",
-                            ft.Icons.LOGIN,
-                            on_click=lambda _: page.go("/login"),
-                        ),
                     ],
                 ),
             ],
